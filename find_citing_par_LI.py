@@ -41,11 +41,10 @@ def find_citing_par(path, sentence, confidence_threshold):
 
     Return
     ------
-    dict_pars: list
-        A list contains dictionary for paragraph text and its metadata.
-        Metadata includes 'pmc' of an article, 'pmid' of an article,
-        'reference_ids' which is a list of reference ``rid`` made in a paragraph,
-        'section' name of an article, and section 'text'
+    paragraph_text: str
+        A string of the paragraph context in which the sentence passed occurs. This is determined by a greedy approach using fuzzy matching
+        and will return the first paragraph that matches at a fuzzy matching confidence of *confidence_threshold* or higher. Not the ideal solution,
+        but works for now in development
     """
     tree = read_xml(path)
     paragraphs = tree.xpath("//body//p")
