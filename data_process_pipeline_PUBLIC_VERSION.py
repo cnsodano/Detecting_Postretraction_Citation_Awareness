@@ -5,7 +5,7 @@
 Pipeline to pull, parse, and prepare a dataset for training a logistic regression classifier to detect if postretraction citations--citations that
 are made to retracted articles after the article retraction notice has been posted--are acknowledging the retraction or not. 
 
-As of 11/21/24, still in early development stages. Full list of dependencies, unit tests, and troubleshooting to be updated soon
+As of 11/23/24, still in early development stages. Full list of dependencies, unit tests, and troubleshooting to be updated soon
 
 Written by Christian Sodano. Contact cnsodano@gmail.com for information.
 
@@ -20,6 +20,7 @@ import random  # To solve NaN problem, see below
 import pandas as pd
 import subprocess  # To programmatically pull nxml files for each article using an external script
 from find_citing_par_LI import find_citing_par  # Will be used to match a sentence with a paragraph context, once the file is downloaded
+import tqdm  # For timing
 
 
 DATA_ROOT = "csvs/" 
@@ -94,7 +95,7 @@ known_features_dict = {"pmcid":known_postretraction_citations["pmcid"].tolist(),
                       "years_between_retraction_and_citation": ( known_postretraction_citations["year"]-known_postretraction_citations["retracted_yr"]).tolist(),
                       "citation_context_IMRaD_section": known_postretraction_citations["IMRaD"],
                       "citation_from_csv": known_citations_ground_truth_sentences,
-                      "citation_paragraph_parsed": known_postretraction_citations["longer_context"].tolist() # THIS IS A SHORTCUT FORN OW, ULTIMATELY WANT TO DO THE SAME PARSING OF THE WHOLE 
+                      "citation_paragraph_parsed": known_postretraction_citations["longer_context"].tolist() # THIS IS A SHORTCUT FOR NOW, ULTIMATELY WANT TO DO THE SAME PARSING OF THE WHOLE 
                                                                                                              # PARAGRPH FOR THE KNOWN AS WELL AS THE UNKNOWN. The known has a "longer context" 
                                                                                                              # that is more than 1 sentence, but not quite the full paragraph
                       }
@@ -118,7 +119,6 @@ while (i<len(unknown_cit_pmcids)):
     i+=1
 pbar.close()
 breakpoint()
-
 
 
 # TODO:
@@ -191,3 +191,7 @@ new_data.insert(0,"label", base_data["label"])
 breakpoint()
 PROCESSED_DATA_NAME = "aggregated_data-11-21-24_min_max_normalized_only_features.csv"
 new_data.to_csv(DATA_ROOT+PROCESSED_DATA_NAME)
+
+# TODO here, implement scikitlearn logistic regression or other packages. At the moment, using LightSide, an open-source GUI text-mining software introduced
+# to me by Jaime Arguello in his INLS 613: Text Mining course.
+# Link here: https://ankara.lti.cs.cmu.edu/side/ 
